@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Super Shop - Product Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f1f5f9;
+      margin: 0;
+      padding: 20px;
+      color: #185ebf;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1a1d21;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-left: 6px solid #2e4d76;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #185ebf;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      border-radius: 5px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #2e4d76;
+      color: white;
+      border: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: white;
+      color: #2e4d76;
+      border-color: #2e4d76;
+      border-width: 1cm;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e2e8f0;
+      color: #185ebf;
+    }
+
+    .message {
+      margin-top: 10px;
+      color: #22c55e;
+      font-weight: 500;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    @media (min-width: 768px) {
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛒 Super Shop Product Dashboard</h1>
+
+  <div class="container">
+    
+    <div class="grid-2">
+      <!-- Add Product -->
+      <div class="card">
+        <h3>Add Product</h3>
+        <input id="add-id" type="number" placeholder="Product ID" />
+        <input id="add-name" type="text" placeholder="Product Name" />
+        <input id="add-price" type="number" placeholder="Price" />
+        <input id="add-qty" type="number" placeholder="Quantity" />
+        <input id="add-exp" type="date" />
+        <select id="add-cat">
+          <option>BeautyCare</option>
+          <option>Vegetables</option>
+          <option>Meat</option>
+          <option>Groceries</option>
+          <option>Others</option>
+        </select>
+        <button onclick="addProduct()">Add Product</button>
+        <div class="message" id="add-output"></div>
+      </div>
+
+      <!-- Update Product -->
+      <div class="card">
+        <h3>Update Product</h3>
+        <input id="upd-id" type="number" placeholder="Product ID" />
+        <input id="upd-name" type="text" placeholder="Product Name" />
+        <input id="upd-price" type="number" placeholder="Price" />
+        <input id="upd-qty" type="number" placeholder="Quantity" />
+        <input id="upd-exp" type="date" />
+        <select id="upd-cat">
+          <option>BeautyCare</option>
+          <option>Vegetables</option>
+          <option>Meat</option>
+          <option>Groceries</option>
+          <option>Others</option>
+        </select>
+        <button onclick="updateProduct()">Update</button>
+        <div class="message" id="upd-output"></div>
+      </div>
+    </div>
+
+    <!-- Bulk Add Products -->
+<div class="card">
+  <h3>Bulk Add Products (JSON)</h3>
+  <textarea id="bulk-json" rows="8" placeholder='[{"ID":4,"Name":"Tomato","Price":50,"Quantity":5,"ExpiryDate":"2025-06-21","productCategory":"Vegetables"}]' style="width: 100%; padding: 10px; font-family: monospace;"></textarea>
+  <button onclick="bulkAdd()">Upload Bulk</button>
+  <div class="message" id="bulk-output"></div>
+</div>
+
+
+    <!-- All Products -->
+    <div class="card">
+      <h3>All Products</h3>
+      <button onclick="getAll()">Fetch All Products</button>
+      <div class="table-container" id="all-output"></div>
+    </div>
+
+    <!-- Get Product By ID -->
+    <div class="card">
+      <h3>Search Product by ID</h3>
+      <input id="search-id" type="number" placeholder="Enter Product ID" />
+      <button onclick="getById()">Search</button>
+      <div class="table-container" id="search-output"></div>
+    </div>
+
+    <!-- Expiring Products -->
+    <div class="card">
+      <h3>Products Expiring Soon</h3>
+      <button onclick="getExpiring()">Get Expiring</button>
+      <div class="table-container" id="exp-output"></div>
+    </div>
+
+
+    <!-- Category Based Discount -->
+    <div class="card">
+      <h3>Category Wise Product</h3>
+      <select id="cat-filter">
+        <option>BeautyCare</option>
+        <option>Vegetables</option>
+        <option>Meat</option>
+        <option>Groceries</option>
+        <option>Others</option>
+      </select>
+      <input id="cat-disc" type="number" step="0.01" placeholder="e.g. 0.85 = 15% off" />
+      <button onclick="getCategoryDiscount()">Get all Products</button>
+      <div class="table-container" id="cat-output"></div>
+    </div>
+  </div>
+
+  <script>
+    const BASE = "http://localhost:8088/api";
+
+    const getInput = id => document.getElementById(id).value;
+    const setMessage = (id, msg) => document.getElementById(id).innerText = msg;
+    const setTable = (id, data) => {
+      const container = document.getElementById(id);
+      if (!Array.isArray(data)) data = [data];
+      if (!data || data.length === 0 || data[0] == null) {
+        container.innerHTML = "<p>No data found.</p>";
+        return;
+      }
+
+      let html = `<table><thead><tr>
+        <th>ID</th><th>Name</th><th>Price</th><th>Qty</th>
+        <th>Expiry</th><th>Category</th><th>Available</th>
+      </tr></thead><tbody>`;
+
+      data.forEach(p => {
+        html += `<tr>
+          <td>${p.ID}</td>
+          <td>${p.Name}</td>
+          <td>${p.Price}</td>
+          <td>${p.Quantity}</td>
+          <td>${p.ExpiryDate}</td>
+          <td>${p.productCategory}</td>
+          <td>${p.Availablity}</td>
+        </tr>`;
+      });
+
+      html += "</tbody></table>";
+      container.innerHTML = html;
+    };
+
+    function addProduct() {
+      const product = {
+        ID: +getInput('add-id'),
+        Name: getInput('add-name'),
+        Price: +getInput('add-price'),
+        Quantity: +getInput('add-qty'),
+        ExpiryDate: getInput('add-exp'),
+        productCategory: getInput('add-cat')
+      };
+      fetch(`${BASE}/add`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      })
+      .then(r => r.text())
+      .then(d => setMessage('add-output', d));
+    }
+
+    function updateProduct() {
+      const product = {
+        ID: +getInput('upd-id'),
+        Name: getInput('upd-name'),
+        Price: +getInput('upd-price'),
+        Quantity: +getInput('upd-qty'),
+        ExpiryDate: getInput('upd-exp'),
+        productCategory: getInput('upd-cat')
+      };
+      fetch(`${BASE}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      })
+      .then(r => r.text())
+      .then(d => setMessage('upd-output', d));
+    }
+
+    function getAll() {
+      fetch(`${BASE}/all`)
+        .then(r => r.json())
+        .then(d => setTable('all-output', d));
+    }
+
+    function getById() {
+      const id = getInput('search-id');
+      fetch(`${BASE}/Product/${id}`)
+        .then(r => r.json())
+        .then(d => setTable('search-output', d));
+    }
+
+    function getExpiring() {
+      fetch(`${BASE}/expiring`)
+        .then(r => r.json())
+        .then(d => setTable('exp-output', d));
+    }
+
+
+
+    function getCategoryDiscount() {
+      const cat = getInput('cat-filter');
+      const disc = getInput('cat-disc');
+      fetch(`${BASE}/category-discount?category=${cat}&discount=${disc}`)
+        .then(r => r.json())
+        .then(d => setTable('cat-output', d));
+    }
+
+
+
+
+
+
+    function bulkAdd() {
+  const jsonText = document.getElementById('bulk-json').value;
+  let products;
+
+  try {
+    products = JSON.parse(jsonText);
+    if (!Array.isArray(products)) throw "Not an array";
+  } catch (e) {
+    setMessage('bulk-output', "❌ Invalid JSON format.");
+    return;
+  }
+
+  fetch(`${BASE}/add-bulk`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(products)
+  })
+  .then(r => r.text())
+  .then(d => setMessage('bulk-output', d));
+}
+
+  </script>
+
+</body>
+</html>
