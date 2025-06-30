@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public class LogEntryRepo {
-    public final JdbcTemplate jdbc;
+    public JdbcTemplate jdbc;
 
     public String GetByUserId = "SELECT * FROM logentry WHERE userid=?";
     public String Insert = "INSERT INTO logentry (userid, method, action, timestamp) VALUES (?, ?, ?, ?)";

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public class OfferLetterRepo {
-    public final JdbcTemplate jdbc;
+    public JdbcTemplate jdbc;
 
     public String GetByStudentId = "SELECT * FROM offerletter WHERE student_id=?";
     public String GetByCompanyId = "SELECT * FROM offerletter WHERE company_id=?";

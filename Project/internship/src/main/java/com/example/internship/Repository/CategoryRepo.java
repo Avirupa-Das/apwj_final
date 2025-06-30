@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public class CategoryRepo {
-    public final JdbcTemplate jdbc;
+    public JdbcTemplate jdbc;
 
     public String GetAll = "SELECT * FROM category";
     public String Insert = "INSERT INTO category (name, description) VALUES (?, ?)";

@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 
 @Repository
 public class CompanyProfileRepo {
-    public final JdbcTemplate jdbc;
+    public JdbcTemplate jdbc;
 
     public String GetByUserId = "SELECT * FROM companyprofile WHERE user_id=?";
     public String Update = "UPDATE companyprofile SET name=?, industry=?, website=?, contact_person=?, location=?, phone_no=? WHERE user_id=?";

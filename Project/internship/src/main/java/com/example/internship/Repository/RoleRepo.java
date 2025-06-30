@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public class RoleRepo {
-    public final JdbcTemplate jdbc;
+    public JdbcTemplate jdbc;
 
     public String GetAll = "SELECT * FROM role";
 

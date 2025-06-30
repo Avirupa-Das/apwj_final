@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public class InternshipRepo {
-    public final JdbcTemplate jdbc;
+    public JdbcTemplate jdbc;
 
     public String GetAll = "SELECT * FROM internship";
     public String Insert = "INSERT INTO internship (title, company_id, category_id, description, deadline, active, posted_date) VALUES (?, ?, ?, ?, ?, ?, ?)";

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public class UserRepo {
-    public final JdbcTemplate jdbc;
+    public JdbcTemplate jdbc;
 
     public String GetAll = "SELECT * FROM user";
     public String FindByEmail = "SELECT * FROM user WHERE email=?";
