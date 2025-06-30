@@ -16,6 +16,7 @@ public class UserRepo {
     public String FindByEmail = "SELECT * FROM user WHERE email=?";
     public String UpdateApproval = "UPDATE user SET approved=? WHERE id=?";
     public String Delete = "DELETE FROM user WHERE id=?";
+    public String Insert = "INSERT INTO user (email, password, roleId, approved, createDate) VALUES (?, ?, ?, ?, ?)";
 
     public UserRepo(DataSource dataSource) {
         this.jdbc = new JdbcTemplate(dataSource);
@@ -35,5 +36,13 @@ public class UserRepo {
 
     public void delete(int id) {
         jdbc.update(Delete, id);
+    }
+    public void insert(User user) {
+        jdbc.update(Insert,
+                user.getEmail(),
+                user.getPassword(),
+                user.getRoleId(),
+                user.isApproved()
+        );
     }
 }
