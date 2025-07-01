@@ -1,9 +1,7 @@
 package com.example.internship.Service;
 
 import com.example.internship.Entity.User;
-import com.example.internship.Entity.Role;
 import com.example.internship.Repository.UserRepo;
-import com.example.internship.Repository.RoleRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,11 +9,9 @@ import java.util.List;
 @Service
 public class UserService {
     public UserRepo userRepo;
-    public RoleRepo roleRepo;
 
-    public UserService(UserRepo userRepo, RoleRepo roleRepo) {
+    public UserService(UserRepo userRepo) {
         this.userRepo = userRepo;
-        this.roleRepo = roleRepo;
     }
 
     public List<User> getAllUsers() {
@@ -34,11 +30,7 @@ public class UserService {
         userRepo.delete(id);
     }
 
-    public void createUser(User user) {
+    public void registerUser(User user) {
         userRepo.insert(user);
-    }
-
-    public List<Role> getAllRoles() {
-        return roleRepo.getAll();
     }
 }

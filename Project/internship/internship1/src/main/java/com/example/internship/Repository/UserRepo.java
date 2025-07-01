@@ -37,6 +37,7 @@ public class UserRepo {
     public void delete(int id) {
         jdbc.update(Delete, id);
     }
+
     public void insert(User user) {
         jdbc.update(Insert,
                 user.getEmail(),
@@ -45,4 +46,5 @@ public class UserRepo {
                 user.isApproved()
         );
     }
+
 }

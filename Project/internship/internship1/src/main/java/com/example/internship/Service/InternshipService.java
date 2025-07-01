@@ -19,16 +19,24 @@ public class InternshipService {
         return internshipRepo.getAll();
     }
 
-    public List<Internship> searchInternships(String keyword) {
-        return internshipRepo.searchByTitle(keyword);
+    public void addInternship(Internship internship) {
+        internshipRepo.insert(internship);
     }
 
-    public List<Internship> getDeadlinesBefore(LocalDate date) {
-        return internshipRepo.getUpcomingDeadlines(date);
+    public void updateInternship(Internship internship) {
+        internshipRepo.update(internship);
     }
 
     public void deleteInternship(int id) {
         internshipRepo.delete(id);
     }
-}
 
+    public List<Internship> searchInternships(String keyword) {
+        return internshipRepo.searchByTitle(keyword);
+    }
+
+    public List<Internship> getUpcomingDeadlines(int daysAhead) {
+        LocalDate withinDate = LocalDate.now().plusDays(daysAhead);
+        return internshipRepo.getUpcomingDeadlines(withinDate);
+    }
+}
